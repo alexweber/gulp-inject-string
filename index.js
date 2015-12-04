@@ -80,6 +80,20 @@ module.exports = {
       return stream(function(fileContents) {
         return fileContents.replace(new RegExp(search, 'g'), str);
       });
+    },
+    between: function (start, stop, str) {
+      return stream(function(fileContents) {
+        var indexStart, indexStop;
+        indexStart = fileContents.indexOf(start);
+        indexStop = fileContents.indexOf(stop);
+        if (indexStart !== -1 && indexStop !== -1 && indexStart !== indexStop) {
+          var firstHalf = fileContents.substring(0, indexStart + start.length);
+          var lastHalf = fileContents.substring(indexStop);
+          return firstHalf + str + lastHalf;
+        } else {
+          return fileContents;
+        }
+      });
     }
 };
 
