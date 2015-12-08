@@ -35,6 +35,9 @@ describe('gulp-inject-string', function(){
         it('should define a replace method', function(){
             expect(inject.replace).to.be.a('function');
         });
+        it('should define a between method', function(){
+            expect(inject.between).to.be.a('function');
+        });
     });
 
 
@@ -351,6 +354,71 @@ describe('gulp-inject-string', function(){
           stream.write(fakeFile)
 
       });
+    });
+
+    describe('between', function () {
+      var fakeFile;
+
+      beforeEach(function () {
+          fakeFile = new gutil.File({
+              base: 'test/fixtures',
+              cwd: 'test',
+              path: 'test/fixtures/index.html',
+              contents: new Buffer(fixtureFile)
+          });
+      });
+
+
+      it('should replace between the start and end strings with the given string', function(done){
+          var stream = inject.between('<title>Test file</title>', '</head>', '<!-- IT WORKS -->');
+          var expectedFile = fs.readFileSync( path.join(__dirname, './expected/between.html'));
+
+          stream.once('data', function(newFile){
+              expect(String(newFile.contents)).to.equal(String(expectedFile));
+              done();
+          });
+
+          stream.write(fakeFile);
+      });
+
+      it('should replace only the first occurrence of the start and end strings with the given string', function(done){
+          var stream = inject.between('<span>', '</span>', '<!-- IT WORKS -->');
+          var expectedFile = fs.readFileSync( path.join(__dirname, './expected/between2.html'));
+
+          stream.once('data', function(newFile){
+              expect(String(newFile.contents)).to.equal(String(expectedFile));
+              done();
+          });
+
+          stream.write(fakeFile);
+      });
+
+      it('should do nothing if the start or end strings are not found', function(done){
+          var stream = inject.between('IAMNOTTHERE', 'NEITHERAMI', '<!-- IT WORKS -->');
+          var expectedFile = String(fixtureFile);
+
+          stream.once('data', function(newFile){
+              expect(String(newFile.contents)).to.equal(expectedFile);
+              done();
+          });
+
+          stream.write(fakeFile)
+
+      });
+
+      it('should do nothing if the start or end strings are the same', function(done){
+          var stream = inject.between('<span>', '<span>', '<!-- IT WORKS -->');
+          var expectedFile = String(fixtureFile);
+
+          stream.once('data', function(newFile){
+              expect(String(newFile.contents)).to.equal(expectedFile);
+              done();
+          });
+
+          stream.write(fakeFile)
+
+      });
+
     });
 
     describe('_stream', function () {
