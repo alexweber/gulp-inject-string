@@ -15,6 +15,8 @@ before(search, str)     // Inserts the string before the first occurence of *sea
 after(search, str)      // Inserts the string after the first occurence of *search*
 beforeEach(search, str) // Inserts the string before each occurence of *search*
 afterEach(search, str)  // Inserts the string after each occurence of *search*
+replace(search, str)    // Replaces the search string with replacement string
+between(start, end, str)// Inserts the replacement string in between start and end
 ```
 
 ## Examples
